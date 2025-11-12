@@ -12,7 +12,7 @@ import java.util.UUID;
 
 @Component
 public class AlbumMapper {
-    public Album toAlbum(Long id, AlbumCreateDto createDto){
+    public Album toAlbum(Long id, AlbumCreateDto createDto) {
         return Album.builder()
                 .id(id)
                 .nombre(createDto.getNombre())
@@ -25,35 +25,38 @@ public class AlbumMapper {
                 .build();
     }
 
-    public Album toAlbum(AlbumUpdateDto updateDto, Album albumOriginal){
+    public Album toAlbum(AlbumUpdateDto updateDto, Album album) {
         return Album.builder()
-                .id(albumOriginal.getId())
-                .nombre(updateDto.getNombre() != null ? updateDto.getNombre() : albumOriginal.getNombre())
-                .artista(updateDto.getArtista() != null ? updateDto.getArtista() : albumOriginal.getArtista())
-                .genero(updateDto.getGenero() != null ? updateDto.getGenero() : albumOriginal.getGenero())
-                .precio(updateDto.getPrecio() != null ? updateDto. getPrecio() : albumOriginal.getPrecio())
-                .uuid(albumOriginal.getUuid())
-                .createdAt(albumOriginal.getCreatedAt())
+                .id(album.getId())
+                .nombre(updateDto.getNombre() != null ? updateDto.getNombre() : album.getNombre())
+                .genero(updateDto.getGenero() != null ? updateDto.getGenero() : album.getGenero())
+                // Una vez creado el álbum, no se puede cambiar el artista
+                .artista(album.getArtista())
+                .precio(updateDto.getPrecio() != null ? updateDto.getPrecio() : album.getPrecio())
+                .createdAt(album.getCreatedAt())
                 .updatedAt(LocalDateTime.now())
+                .uuid(album.getUuid())
                 .build();
     }
 
-    public AlbumResponseDto toAlbumResponseDto(Album album){
+    public AlbumResponseDto toAlbumResponseDto(Album album) {
         return AlbumResponseDto.builder()
                 .id(album.getId())
                 .nombre(album.getNombre())
                 .artista(album.getArtista())
                 .genero(album.getGenero())
                 .precio(album.getPrecio())
-                .uuid(album.getUuid())
                 .createdAt(album.getCreatedAt())
                 .updatedAt(album.getUpdatedAt())
+                .uuid(album.getUuid())
                 .build();
     }
 
-    public List<AlbumResponseDto> toResponseDtoList(List<Album> albumes){
+    // Mapeamos de modelo a DTO (lista)
+    public List<AlbumResponseDto> toResponseDtoList(List<Album> albumes) {
         return albumes.stream()
                 .map(this::toAlbumResponseDto)
                 .toList();
     }
+
 }

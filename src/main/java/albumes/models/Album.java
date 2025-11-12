@@ -10,6 +10,7 @@ import java.util.UUID;
 @Data
 public class Album {
     private Long id;
+
     private String nombre;
     private String artista;
     private String genero;
@@ -18,5 +19,4 @@ public class Album {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private UUID uuid;
-
 }

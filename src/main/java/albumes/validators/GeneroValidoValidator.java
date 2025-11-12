@@ -1,24 +1,25 @@
 package albumes.validators;
 
+
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
-import java.util.Set;
-
-public class GeneroValidoValidator implements ConstraintValidator<GeneroValido, String> {
-
-    private static final Set<String> GENEROS_PERMITIDOS = Set.of("Rock", "Pop");
+public class GeneroValidoValidator implements
+        ConstraintValidator<GeneroValido, String> {
 
     @Override
-    public void initialize(GeneroValido constraintAnnotation){
+    public void initialize(GeneroValido generoValido) {
     }
 
     @Override
-    public boolean isValid(String generoField, ConstraintValidatorContext context){
-        if(generoField == null || generoField.isBlank()){
-            return true;
+    public boolean isValid(String generoField,
+                           ConstraintValidatorContext context) {
+        if (generoField == null) {
+            return true; // Permitir valores null, otras anotaciones controlan esto
         }
-        return GENEROS_PERMITIDOS.stream()
-                .anyMatch(g -> g.equalsIgnoreCase(generoField));
+        boolean isRock = generoField.equalsIgnoreCase("Rock");
+        boolean isPop = generoField.equalsIgnoreCase("Pop");
+        return isRock || isPop;
     }
+
 }

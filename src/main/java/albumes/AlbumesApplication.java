@@ -8,7 +8,7 @@ import org.springframework.cache.annotation.EnableCaching;
 @SpringBootApplication
 public class AlbumesApplication {
 
-    public static void main(String[] args) {
+    static void main(String[] args) {
         SpringApplication.run(AlbumesApplication.class, args);
     }
 

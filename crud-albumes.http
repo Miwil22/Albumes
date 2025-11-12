@@ -1,65 +1,43 @@
-### API de Álbumes v1
-
 ### getAlbumesAll
 GET http://localhost:3000/api/v1/albumes
 
-### getAlbumesAll (por artista)
+### getAlbumesAll
+GET http://localhost:3000/api/v1/albumes?nombre=Abbey
+
+### getAlbumesAll
+GET http://localhost:3000/api/v1/albumes?nombre=Abbey&artista=Beatles
+
+### getAlbumesAll
 GET http://localhost:3000/api/v1/albumes?artista=Beatles
 
-### getAlbumesAll (por nombre)
-GET http://localhost:3000/api/v1/albumes?nombre=Road
-
-### getAlbumesAll (por nombre y artista)
-GET http://localhost:3000/api/v1/albumes?nombre=Road&artista=Beatles
-
-### getAlbumById (OK)
+### gatAlbumById
 GET http://localhost:3000/api/v1/albumes/1
 
-### getAlbumById (Not Found)
-GET http://localhost:3000/api/v1/albumes/99
+### gatAlbumById (uno que no existe)
+GET http://localhost:3000/api/v1/albumes/3
 
-### Nuevo Álbum (OK)
+### Nuevo álbum
 POST http://localhost:3000/api/v1/albumes
 Content-Type: application/json
 
 {
   "nombre": "Un Verano Sin Ti",
   "artista": "Bad Bunny",
-  "genero": "Pop",
+  "genero": "Reggaeton",
   "precio": 25.99
 }
 
-### Nuevo Álbum (Bad Request - Género no válido)
-POST http://localhost:3000/api/v1/albumes
-Content-Type: application/json
-
-{
-  "nombre": "Test",
-  "artista": "Test",
-  "genero": "Cumbia",
-  "precio": 10.0
-}
-
-### Actualiza Álbum (PUT)
+### Actualiza álbum
 PUT http://localhost:3000/api/v1/albumes/1
 Content-Type: application/json
 
 {
   "nombre": "Abbey Road (Remastered)",
-  "precio": 22.99,
-  "genero": "Rock"
+  "artista": "The Beatles",
+  "genero": "Rock",
+  "precio": 22.99
 }
 
-### Actualiza Álbum Parcial (PATCH)
-PATCH http://localhost:3000/api/v1/albumes/2
-Content-Type: application/json
 
-{
-  "precio": 16.99
-}
-
-### Delete Álbum (OK)
+### Delete álbum
 DELETE http://localhost:3000/api/v1/albumes/2
-
-### Delete Álbum (Not Found)
-DELETE http://localhost:3000/api/v1/albumes/99

@@ -11,21 +11,17 @@ import albumes.repositories.AlbumRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Spy;
+import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+// Integra Mockito con JUnit5 para poder usar mocks, espías y capturadores en los tests
 @ExtendWith(MockitoExtension.class)
 class AlbumServiceImplTest {
 
@@ -45,165 +41,297 @@ class AlbumServiceImplTest {
 
     private AlbumResponseDto responseDto1;
 
+    // usamos el repositorio totalmente simulado
     @Mock
     private AlbumRepository albumRepository;
 
+    // usamos el mapper real aunque en modo espía que nos permite simular algunas partes del mismo
     @Spy
-    private AlbumMapper albumMapper = new AlbumMapper();
+    private AlbumMapper albumMapper;
 
+    // Es la clase que se testea y a la que se inyectan los mocks y espías automáticamente
     @InjectMocks
     private AlbumServiceImpl albumService;
+
+    // Capturador de argumentos
+    @Captor
+    private ArgumentCaptor<Album> albumCaptor;
 
 
     @BeforeEach
     void setUp() {
         responseDto1 = albumMapper.toAlbumResponseDto(album1);
+        // Quizá no la necesitemos
+        // responseDto2 = albumMapper.toAlbumResponseDto(album2);
     }
 
     @Test
     void findAll_ShouldReturnAllAlbums_WhenNoParametersProvided() {
-        when(albumRepository.findAll()).thenReturn(List.of(album1, album2));
+        // Arrange
+        List<Album> expectedAlbums = Arrays.asList(album1, album2);
+        List<AlbumResponseDto> expectedAlbumResponses = albumMapper.toResponseDtoList(expectedAlbums);
+        when(albumRepository.findAll()).thenReturn(expectedAlbums);
 
-        List<AlbumResponseDto> res = albumService.findAll(null, null);
+        // Act
+        List<AlbumResponseDto> actualAlbumResponses = albumService.findAll(null, null);
 
-        assertAll(
-                () -> assertEquals(2, res.size()),
-                () -> assertEquals(responseDto1.getNombre(), res.get(0).getNombre())
-        );
+        // Assert
+        assertIterableEquals(expectedAlbumResponses, actualAlbumResponses);
+
+        // Verify
+        // verifica que findAll() se ejecuta una vez
         verify(albumRepository, times(1)).findAll();
     }
 
     @Test
     void findAll_ShouldReturnAlbumsByNombre_WhenNombreParameterProvided() {
-        when(albumRepository.findAllByNombre("Abbey Road")).thenReturn(List.of(album1));
+        // Arrange
+        String nombre = "Abbey Road";
+        List<Album> expectedAlbums = List.of(album1);
+        List<AlbumResponseDto> expectedAlbumResponses = albumMapper.toResponseDtoList(expectedAlbums);
+        when(albumRepository.findAllByNombre(nombre)).thenReturn(expectedAlbums);
 
-        var res = albumService.findAll("Abbey Road", null);
+        // Act
+        List<AlbumResponseDto> actualAlbumResponses = albumService.findAll(nombre, null);
 
-        assertEquals(1, res.size());
-        verify(albumRepository, only()).findAllByNombre("Abbey Road");
+        // Assert
+        assertIterableEquals(expectedAlbumResponses, actualAlbumResponses);
+
+        // Verify
+        // Verifica que solo se ejecuta este método
+        verify(albumRepository, only()).findAllByNombre(nombre);
     }
 
     @Test
     void findAll_ShouldReturnAlbumsByArtista_WhenArtistaParameterProvided() {
-        when(albumRepository.findAllByArtista("Michael")).thenReturn(List.of(album2));
+        // Arrange
+        String artista = "The Beatles";
+        List<Album> expectedAlbums = List.of(album1);
+        List<AlbumResponseDto> expectedAlbumResponses = albumMapper.toResponseDtoList(expectedAlbums);
+        when(albumRepository.findAllByArtista(artista)).thenReturn(expectedAlbums);
 
-        var res = albumService.findAll(null, "Michael");
+        // Act
+        List<AlbumResponseDto> actualAlbumResponses = albumService.findAll(null, artista);
 
-        assertEquals(1, res.size());
-        verify(albumRepository, only()).findAllByArtista("Michael");
+        // Assert
+        assertIterableEquals(expectedAlbumResponses, actualAlbumResponses);
+
+        // Verify
+        verify(albumRepository, only()).findAllByArtista(artista);
     }
 
     @Test
     void findAll_ShouldReturnAlbumsByNombreAndArtista_WhenBothParametersProvided() {
-        when(albumRepository.findAllByNombreAndArtista("Abbey", "Beatles")).thenReturn(List.of(album1));
+        // Arrange
+        String nombre = "Abbey Road";
+        String artista = "The Beatles";
+        List<Album> expectedAlbums = List.of(album1);
+        List<AlbumResponseDto> expectedAlbumResponses = albumMapper.toResponseDtoList(expectedAlbums);
+        when(albumRepository.findAllByNombreAndArtista(nombre, artista)).thenReturn(expectedAlbums);
 
-        var res = albumService.findAll("Abbey", "Beatles");
+        // Act
+        List<AlbumResponseDto> actualAlbumResponses = albumService.findAll(nombre, artista);
 
-        assertEquals(1, res.size());
-        verify(albumRepository, only()).findAllByNombreAndArtista("Abbey", "Beatles");
+        // Assert
+        assertIterableEquals(expectedAlbumResponses, actualAlbumResponses);
+
+        // Verify
+        verify(albumRepository, only()).findAllByNombreAndArtista(nombre, artista);
     }
 
     @Test
     void findById_ShouldReturnAlbum_WhenValidIdProvided() {
-        when(albumRepository.findById(1L)).thenReturn(Optional.of(album1));
+        // Arrange
+        Long id = 1L;
+        AlbumResponseDto expectedAlbumResponse = responseDto1;
+        when(albumRepository.findById(id)).thenReturn(Optional.of(album1));
 
-        var res = albumService.findById(1L);
+        // Act
+        AlbumResponseDto actualAlbumResponse = albumService.findById(id);
 
-        assertEquals(responseDto1, res);
-        verify(albumRepository, times(1)).findById(1L);
+        // Assert
+        assertEquals(expectedAlbumResponse, actualAlbumResponse);
+
+        // Verify
+        verify(albumRepository, only()).findById(id);
     }
 
     @Test
     void findById_ShouldThrowAlbumNotFound_WhenInvalidIdProvided() {
-        when(albumRepository.findById(99L)).thenReturn(Optional.empty());
+        // Arrange
+        Long id = 1L;
+        when(albumRepository.findById(id)).thenReturn(Optional.empty());
 
-        var res = assertThrows(AlbumNotFoundException.class, () -> albumService.findById(99L));
-        assertEquals("Álbum con id 99 no encontrado.", res.getMessage());
-        verify(albumRepository).findById(99L);
+        // Act & Assert
+        var res = assertThrows(AlbumNotFoundException.class, () -> albumService.findById(id));
+        assertEquals("Álbum con id " + id + " no encontrado.", res.getMessage());
+
+        // Verify
+        // verifica que se ejecuta el método
+        verify(albumRepository).findById(id);
+    }
+
+
+    @Test
+    void findByUuid_ShouldReturnAlbum_WhenValidUuidProvided() {
+        // Arrange
+        UUID expectedUuid = album1.getUuid();
+        AlbumResponseDto expectedAlbumResponse = responseDto1;
+        when(albumRepository.findByUuid(expectedUuid)).thenReturn(Optional.of(album1));
+
+        // Act
+        AlbumResponseDto actualAlbumResponse = albumService.findByUuid(expectedUuid.toString());
+
+        // Assert
+        assertEquals(expectedAlbumResponse, actualAlbumResponse);
+
+        // Verify
+        verify(albumRepository, only()).findByUuid(expectedUuid);
     }
 
     @Test
     void findByUuid_ShouldThrowAlbumBadUuid_WhenInvalidUuidProvided() {
-        String badUuid = "1234";
-        var res = assertThrows(AlbumBadUuidException.class, () -> albumService.findByUuid(badUuid));
-        assertEquals("El UUID " + badUuid + " no es válido", res.getMessage());
-        verify(albumRepository, never()).findByUuid(any(UUID.class));
+        // Arrange
+        //String uuid = "3a31d097-23cf-4b8d-989a-96e380cc996b";
+        String uuid = "1234";
+        // Act & Assert
+        var res = assertThrows(AlbumBadUuidException.class, () -> albumService.findByUuid(uuid));
+        assertEquals("El UUID " + uuid + " no es válido", res.getMessage());
+
+        // Verify
+        // verifica que no se ha ejecutado
+        verify(albumRepository, never()).findByUuid(any());
     }
 
     @Test
-    void save_ShouldReturnSavedAlbum() {
+    void save_ShouldReturnSavedAlbum_WhenValidAlbumCreateDtoProvided() {
+        // Arrange
         AlbumCreateDto createDto = AlbumCreateDto.builder()
                 .nombre("New Album")
                 .artista("New Artist")
                 .precio(10.0f)
                 .build();
+        Album expectedAlbum = Album.builder()
+                .id(1L)
+                .nombre("New Album")
+                .artista("New Artist")
+                .precio(10.0f)
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .uuid(UUID.randomUUID())
+                .build();
+        AlbumResponseDto expectedAlbumResponse = albumMapper.toAlbumResponseDto(expectedAlbum);
 
-        Album albumAGuardar = albumMapper.toAlbum(3L, createDto);
+        when(albumRepository.nextId()).thenReturn(1L);
+        when(albumRepository.save(any(Album.class))).thenReturn(expectedAlbum);
 
-        when(albumRepository.nextId()).thenReturn(3L);
-        when(albumRepository.save(any(Album.class))).thenReturn(albumAGuardar);
+        // Act
+        AlbumResponseDto actualAlbumResponse = albumService.save(createDto);
 
-        var res = albumService.save(createDto);
+        // Assert
+        assertEquals(expectedAlbumResponse, actualAlbumResponse);
 
-        assertEquals(3L, res.getId());
-        assertEquals("New Album", res.getNombre());
-
+        // Verify
         verify(albumRepository).nextId();
-        verify(albumRepository).save(any(Album.class));
+        verify(albumRepository).save(albumCaptor.capture());
+
+        Album albumCaptured = albumCaptor.getValue();
+        assertEquals(expectedAlbum.getNombre(), albumCaptured.getNombre());
+        // equivalente con AsssertJ en lugar de JUnit
+        //assertThat(albumCaptured.getNombre()).isEqualTo(expectedAlbum.getNombre());
+
+
     }
 
     @Test
-    void update_ShouldReturnUpdatedAlbum_WhenValidIdProvided() {
+    void update_ShouldReturnUpdatedAlbum_WhenValidIdAndAlbumUpdateDtoProvided() {
+        // Arrange
+        Long id = 1L;
+        Float precio = 500.0f;
+        when(albumRepository.findById(id)).thenReturn(Optional.of(album1));
+
         AlbumUpdateDto updateDto = AlbumUpdateDto.builder()
-                .nombre("Updated Name")
-                .precio(500.0f)
+                .precio(precio)
                 .build();
+        Album albumUpdate = albumMapper.toAlbum(updateDto, album1);
+        when(albumRepository.save(any(Album.class))).thenReturn(albumUpdate);
 
-        Album albumActualizado = albumMapper.toAlbum(updateDto, album1);
+        responseDto1.setPrecio(precio);
+        AlbumResponseDto expectedAlbumResponse = responseDto1;
 
-        when(albumRepository.findById(1L)).thenReturn(Optional.of(album1));
-        when(albumRepository.save(any(Album.class))).thenReturn(albumActualizado);
+        // Act
+        AlbumResponseDto actualAlbumResponse = albumService.update(id, updateDto);
 
-        var res = albumService.update(1L, updateDto);
+        // Assert
+        // con Junit da error
+        //assertEquals(expectedAlbumResponse, actualAlbumResponse);
+        // con AssertJ podemos excluir algún campo
+        assertThat(actualAlbumResponse)
+                .usingRecursiveComparison()
+                .ignoringFields("updatedAt")
+                .isEqualTo(expectedAlbumResponse);
 
-        assertEquals("Updated Name", res.getNombre());
-        assertEquals(500.0f, res.getPrecio());
-
-        verify(albumRepository).findById(1L);
-        verify(albumRepository).save(any(Album.class));
+        // Verify
+        verify(albumRepository).findById(id);
+        verify(albumRepository).save(any());
     }
 
     @Test
     void update_ShouldThrowAlbumNotFound_WhenInvalidIdProvided() {
-        AlbumUpdateDto updateDto = AlbumUpdateDto.builder().build();
-        when(albumRepository.findById(99L)).thenReturn(Optional.empty());
+        // Arrange
+        Long id = 1L;
+        AlbumUpdateDto updateDto = AlbumUpdateDto.builder()
+                .precio(500.0f)
+                .build();
+        when(albumRepository.findById(id)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> albumService.update(99L, updateDto))
+        // Act & Assert
+        // con AssertJ
+        assertThatThrownBy(
+                () -> albumService.update(id, updateDto))
                 .isInstanceOf(AlbumNotFoundException.class)
-                .hasMessage("Álbum con id 99 no encontrado.");
+                .hasMessage("Álbum con id " + id + " no encontrado.");
+        // con JUnit
+        //var res = assertThrows(AlbumNotFoundException.class,
+        //    () -> albumService.update(id, updateDto));
+        //assertEquals("Álbum con id " + id + " no encontrada.", res.getMessage());
 
-        verify(albumRepository).findById(99L);
+        // Verify
+        verify(albumRepository).findById(id);
         verify(albumRepository, never()).save(any());
     }
 
     @Test
     void deleteById_ShouldDeleteAlbum_WhenValidIdProvided() {
-        when(albumRepository.findById(1L)).thenReturn(Optional.of(album1));
+        // Arrange
+        Long id = 1L;
+        when(albumRepository.findById(id)).thenReturn(Optional.of(album1));
 
-        albumService.deleteById(1L);
+        // Act
+        // con AssertJ
+        assertThatCode(() -> albumService.deleteById(id))
+                .doesNotThrowAnyException();
 
-        verify(albumRepository).findById(1L);
-        verify(albumRepository).deleteById(1L);
+        // Assert
+        verify(albumRepository).deleteById(id);
     }
 
     @Test
     void deleteById_ShouldThrowAlbumNotFound_WhenInvalidIdProvided() {
-        when(albumRepository.findById(99L)).thenReturn(Optional.empty());
+        // Arrange
+        Long id = 1L;
+        when(albumRepository.findById(id)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> albumService.deleteById(99L))
+        // Act & Assert
+        // con JUnit
+        //var res = assertThrows(AlbumNotFoundException.class, () -> albumService.deleteById(id));
+        //assertEquals("Álbum con id " + id + " no encontrada.", res.getMessage());
+        // El equivalente con AssertJ
+        assertThatThrownBy(() -> albumService.deleteById(id))
                 .isInstanceOf(AlbumNotFoundException.class)
-                .hasMessage("Álbum con id 99 no encontrado.");
+                .hasMessage("Álbum con id " + id + " no encontrado.");
 
-        verify(albumRepository, never()).deleteById(anyLong());
+        // Verify
+        verify(albumRepository, never()).deleteById(id);
     }
 }
