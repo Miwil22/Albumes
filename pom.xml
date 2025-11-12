@@ -8,7 +8,7 @@
         <version>3.5.7</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>org.example</groupId>
+    <groupId>albumes</groupId>
     <artifactId>Albumes</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>Albumes</name>
