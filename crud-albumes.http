@@ -19,7 +19,7 @@ Content-Type: application/json
 {
   "nombre": "Un Verano Sin Ti",
   "artista": "Bad Bunny",
-  "genero": "Pop",º
+  "genero": "Pop",
   "precio": 25.99
 }
 
