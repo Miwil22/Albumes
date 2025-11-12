@@ -1,10 +1,16 @@
-### API de Álbumes
+### API de Álbumes v1
 
 ### getAlbumesAll
 GET http://localhost:3000/api/v1/albumes
 
-### getAlbumesAll (filtrado por artista)
+### getAlbumesAll (por artista)
 GET http://localhost:3000/api/v1/albumes?artista=Beatles
+
+### getAlbumesAll (por nombre)
+GET http://localhost:3000/api/v1/albumes?nombre=Road
+
+### getAlbumesAll (por nombre y artista)
+GET http://localhost:3000/api/v1/albumes?nombre=Road&artista=Beatles
 
 ### getAlbumById (OK)
 GET http://localhost:3000/api/v1/albumes/1
@@ -34,26 +40,26 @@ Content-Type: application/json
   "precio": 10.0
 }
 
-### Nuevo Álbum (Bad Request - Nombre vacío)
-POST http://localhost:3000/api/v1/albumes
-Content-Type: application/json
-
-{
-  "nombre": "",
-  "artista": "Test",
-  "genero": "Rock",
-  "precio": 10.0
-}
-
-
 ### Actualiza Álbum (PUT)
 PUT http://localhost:3000/api/v1/albumes/1
 Content-Type: application/json
 
 {
   "nombre": "Abbey Road (Remastered)",
-  "precio": 22.99
+  "precio": 22.99,
+  "genero": "Rock"
+}
+
+### Actualiza Álbum Parcial (PATCH)
+PATCH http://localhost:3000/api/v1/albumes/2
+Content-Type: application/json
+
+{
+  "precio": 16.99
 }
 
 ### Delete Álbum (OK)
 DELETE http://localhost:3000/api/v1/albumes/2
+
+### Delete Álbum (Not Found)
+DELETE http://localhost:3000/api/v1/albumes/99

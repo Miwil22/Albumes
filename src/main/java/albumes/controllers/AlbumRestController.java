@@ -22,7 +22,7 @@ import java.util.Map;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping
+@RequestMapping("api/${api.version}/albumes")
 public class AlbumRestController {
 
     private final AlbumService albumService;

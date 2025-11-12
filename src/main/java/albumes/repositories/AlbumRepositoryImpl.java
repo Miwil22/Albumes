@@ -21,12 +21,12 @@ public class AlbumRepositoryImpl  implements AlbumRepository{
                 .createdAt(LocalDateTime.now()).updatedAt(LocalDateTime.now())
                 .uuid(UUID.randomUUID()).build());
         save(Album.builder()
-                .id(1L).nombre("Thriller").artista("Michael Jackson")
+                .id(2L).nombre("Thriller").artista("Michael Jackson")
                 .genero("Pop").precio(29.99f)
                 .createdAt(LocalDateTime.now()).updatedAt(LocalDateTime.now())
                 .uuid(UUID.randomUUID()).build());
         save(Album.builder()
-                .id(1L).nombre("Bohemian Rhapsody").artista("Queen")
+                .id(3L).nombre("Bohemian Rhapsody").artista("Queen")
                 .genero("Rock").precio(19.99f)
                 .createdAt(LocalDateTime.now()).updatedAt(LocalDateTime.now())
                 .uuid(UUID.randomUUID()).build());
