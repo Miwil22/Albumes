@@ -25,11 +25,6 @@ public class AlbumRepositoryImpl  implements AlbumRepository{
                 .genero("Pop").precio(29.99f)
                 .createdAt(LocalDateTime.now()).updatedAt(LocalDateTime.now())
                 .uuid(UUID.randomUUID()).build());
-        save(Album.builder()
-                .id(3L).nombre("Bohemian Rhapsody").artista("Queen")
-                .genero("Rock").precio(19.99f)
-                .createdAt(LocalDateTime.now()).updatedAt(LocalDateTime.now())
-                .uuid(UUID.randomUUID()).build());
     }
 
     @Override
