@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
 
 @EnableCaching
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = {"albumes", "artistas"})
 public class AlbumesApplication {
 
     static void main(String[] args) {
