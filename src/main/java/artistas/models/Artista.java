@@ -1,11 +1,12 @@
-package albumes.models;
+package artistas.models;
 
-import artistas.models.Artista;
+import albumes.models.Album;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
+import java.util.List;
 
 @Builder
 @Getter
@@ -13,24 +14,14 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "ALBUMES")
-public class Album {
+@Table(name = "ARTISTAS")
+public class Artista {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(unique = true, nullable = false)
     private String nombre;
-
-    @Column(nullable = false)
-    private String genero;
-
-    @Column(nullable = false)
-    private Float precio;
-
-    @Builder.Default
-    @Column(unique = true, updatable = false, nullable = false)
-    private UUID uuid = UUID.randomUUID();
 
     @Column(columnDefinition = "boolean default false")
     @Builder.Default
@@ -44,8 +35,8 @@ public class Album {
     @Column(nullable = false)
     private LocalDateTime updatedAt = LocalDateTime.now();
 
-    // Relación: Muchos Álbumes pertenecen a un Artista
-    @ManyToOne
-    @JoinColumn(name = "artista_id")
-    private Artista artista;
+    // Un Artista tiene muchos Albumes
+    @OneToMany(mappedBy = "artista")
+    @JsonIgnoreProperties("artista") // Evita bucle infinito al convertir a JSON
+    private List<Album> albumes;
 }

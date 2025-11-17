@@ -8,6 +8,7 @@ import albumes.exceptions.AlbumNotFoundException;
 import albumes.mappers.AlbumMapper;
 import albumes.models.Album;
 import albumes.repositories.AlbumRepository;
+import artistas.services.ArtistaService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheConfig;
@@ -24,29 +25,28 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Service
 public class AlbumServiceImpl implements AlbumService {
+
     private final AlbumRepository albumRepository;
     private final AlbumMapper albumMapper;
+    private final ArtistaService artistaService;
 
     @Override
     public List<AlbumResponseDto> findAll(String nombre, String artista) {
-        // Si todos los args están vacíos o nulos, devolvemos todos los álbumes
         if ((nombre == null || nombre.isEmpty()) && (artista == null || artista.isEmpty())) {
             log.info("Buscando todos los álbumes");
             return albumMapper.toResponseDtoList(albumRepository.findAll());
         }
-        // Si el nombre no está vacío, pero el artista si, buscamos por nombre
         if ((nombre != null && !nombre.isEmpty()) && (artista == null || artista.isEmpty())) {
             log.info("Buscando álbumes por nombre: {}", nombre);
-            return albumMapper.toResponseDtoList(albumRepository.findAllByNombre(nombre));
+            return albumMapper.toResponseDtoList(albumRepository.findByNombreContainingIgnoreCase(nombre));
         }
-        // Si el nombre está vacío, pero el artista no, buscamos por artista
         if (nombre == null || nombre.isEmpty()) {
             log.info("Buscando álbumes por artista: {}", artista);
-            return albumMapper.toResponseDtoList(albumRepository.findAllByArtista(artista));
+            // Asumiendo que implementaste la búsqueda por nombre de artista en el repositorio
+            return albumMapper.toResponseDtoList(albumRepository.findByArtistaNombreContainingIgnoreCase(artista));
         }
-        // Si el nombre y el artista no están vacíos, buscamos por ambos
         log.info("Buscando álbumes por nombre: {} y artista: {}", nombre, artista);
-        return albumMapper.toResponseDtoList(albumRepository.findAllByNombreAndArtista(nombre, artista));
+        return albumMapper.toResponseDtoList(albumRepository.findByNombreAndArtista(nombre, artista));
     }
 
     // Cachea con el id como key
@@ -54,9 +54,8 @@ public class AlbumServiceImpl implements AlbumService {
     @Override
     public AlbumResponseDto findById(Long id) {
         log.info("Buscando álbum por id {}", id);
-
         return albumMapper.toAlbumResponseDto(albumRepository.findById(id)
-                .orElseThrow(()-> new AlbumNotFoundException(id)));
+                .orElseThrow(() -> new AlbumNotFoundException(id)));
     }
 
     // Cachea con el uuid como key
@@ -71,19 +70,21 @@ public class AlbumServiceImpl implements AlbumService {
         } catch (IllegalArgumentException e) {
             throw new AlbumBadUuidException(uuid);
         }
-
     }
 
-    // Cachea con el id del resultado de la operación como key
     @CachePut(key = "#result.id")
     @Override
     public AlbumResponseDto save(AlbumCreateDto createDto) {
         log.info("Guardando álbum: {}", createDto);
-        // obtenemos el id de álbum
-        Long id = albumRepository.nextId();
-        // Creamos el álbum nuevo con los datos que nos vienen
-        Album nuevoAlbum = albumMapper.toAlbum(id, createDto);
-        // Lo guardamos en el repositorio
+
+        // 1. Buscamos el artista (Lanzará excepción si no existe)
+        // Ojo: AlbumCreateDto debe tener un campo "artista" que sea el nombre (String)
+        var artista = artistaService.findByNombre(createDto.getArtista());
+
+        // 2. Mapeamos el DTO a Entidad pasando el objeto Artista completo
+        Album nuevoAlbum = albumMapper.toAlbum(createDto, artista);
+
+        // 3. Guardamos
         return albumMapper.toAlbumResponseDto(albumRepository.save(nuevoAlbum));
     }
 
@@ -91,11 +92,12 @@ public class AlbumServiceImpl implements AlbumService {
     @Override
     public AlbumResponseDto update(Long id, AlbumUpdateDto updateDto) {
         log.info("Actualizando álbum por id: {}", id);
-        // Si no existe lanza excepción
-        var albumActual = albumRepository.findById(id).orElseThrow(()-> new AlbumNotFoundException(id));
-        // Actualizamos el álbum con los datos que nos vienen
-        Album albumActualizado =  albumMapper.toAlbum(updateDto, albumActual);
-        // Lo guardamos en el repositorio
+        var albumActual = albumRepository.findById(id)
+                .orElseThrow(() -> new AlbumNotFoundException(id));
+
+        // Actualizamos los datos
+        Album albumActualizado = albumMapper.toAlbum(updateDto, albumActual);
+
         return albumMapper.toAlbumResponseDto(albumRepository.save(albumActualizado));
     }
 
@@ -104,11 +106,8 @@ public class AlbumServiceImpl implements AlbumService {
     @Override
     public void deleteById(Long id) {
         log.debug("Borrando álbum por id: {}", id);
-        // Si no existe lanza excepción
-        albumRepository.findById(id).orElseThrow(()-> new AlbumNotFoundException(id));
-        // Lo borramos del repositorio si existe
+        albumRepository.findById(id)
+                .orElseThrow(() -> new AlbumNotFoundException(id));
         albumRepository.deleteById(id);
-
     }
-
 }

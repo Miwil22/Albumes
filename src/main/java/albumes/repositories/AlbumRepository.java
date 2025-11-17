@@ -1,33 +1,25 @@
 package albumes.repositories;
 
 import albumes.models.Album;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface AlbumRepository {
-    List<Album> findAll();
+@Repository
+public interface AlbumRepository extends JpaRepository<Album, Long> {
 
-    List<Album> findAllByNombre(String nombre);
+    List<Album> findByNombreContainingIgnoreCase(String nombre);
 
-    List<Album> findAllByArtista(String artista);
+    // Buscamos por el nombre del artista asociado
+    @Query("SELECT a FROM Album a WHERE LOWER(a.artista.nombre) LIKE %:artista%")
+    List<Album> findByArtistaNombreContainingIgnoreCase(String artista);
 
-    List<Album> findAllByNombreAndArtista(String nombre, String artista);
-
-    Optional<Album> findById(Long id);
+    @Query("SELECT a FROM Album a WHERE LOWER(a.nombre) LIKE %:nombre% AND LOWER(a.artista.nombre) LIKE %:artista%")
+    List<Album> findByNombreAndArtista(String nombre, String artista);
 
     Optional<Album> findByUuid(UUID uuid);
-
-    boolean existsById(Long id);
-
-    boolean existsByUuid(UUID uuid);
-
-    Album save(Album album);
-
-    void deleteById(Long id);
-
-    void deleteByUuid(UUID uuid);
-
-    Long nextId();
 }
