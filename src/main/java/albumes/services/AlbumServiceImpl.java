@@ -33,19 +33,15 @@ public class AlbumServiceImpl implements AlbumService {
     @Override
     public List<AlbumResponseDto> findAll(String nombre, String artista) {
         if ((nombre == null || nombre.isEmpty()) && (artista == null || artista.isEmpty())) {
-            log.info("Buscando todos los álbumes");
             return albumMapper.toResponseDtoList(albumRepository.findAll());
         }
-        if ((nombre != null && !nombre.isEmpty()) && (artista == null || artista.isEmpty())) {
-            log.info("Buscando álbumes por nombre: {}", nombre);
+        if (nombre != null && (artista == null || artista.isEmpty())) {
             return albumMapper.toResponseDtoList(albumRepository.findByNombreContainingIgnoreCase(nombre));
         }
-        if (nombre == null || nombre.isEmpty()) {
-            log.info("Buscando álbumes por artista: {}", artista);
-            // Asumiendo que implementaste la búsqueda por nombre de artista en el repositorio
+        if ((nombre == null || nombre.isEmpty()) && artista != null) {
             return albumMapper.toResponseDtoList(albumRepository.findByArtistaNombreContainingIgnoreCase(artista));
         }
-        log.info("Buscando álbumes por nombre: {} y artista: {}", nombre, artista);
+        // Esta llamada coincide con el @Query que acabamos de poner en el repositorio
         return albumMapper.toResponseDtoList(albumRepository.findByNombreAndArtista(nombre, artista));
     }
 

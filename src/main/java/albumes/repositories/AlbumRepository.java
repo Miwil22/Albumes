@@ -13,28 +13,26 @@ import java.util.UUID;
 @Repository
 public interface AlbumRepository extends JpaRepository<Album, Long> {
 
-    // Por nombre (Equivalente a findByNumero pero usando Containing para búsquedas parciales)
-    // En Tarjetas es findByNumero (exacto), aquí usamos Containing para nombres de álbumes
+    // Buscar por nombre (Usamos Containing para búsquedas parciales, igual que Tarjetas usa para Titular)
     List<Album> findByNombreContainingIgnoreCase(String nombre);
 
-    // Por artista (Equivalente a findByTitularContainsIgnoreCase)
-    // Usamos JPQL para navegar a la entidad Artista
+    // Buscar por nombre del artista (Navegamos por la relación: artista.nombre)
     @Query("SELECT a FROM Album a WHERE LOWER(a.artista.nombre) LIKE %:artista%")
     List<Album> findByArtistaNombreContainingIgnoreCase(String artista);
 
-    // Por nombre y artista (Equivalente a findByNumeroAndTitularContainsIgnoreCase)
+    // Buscar por ambos
     @Query("SELECT a FROM Album a WHERE LOWER(a.nombre) LIKE %:nombre% AND LOWER(a.artista.nombre) LIKE %:artista%")
-    List<Album> findByNombreContainingIgnoreCaseAndArtistaNombreContainingIgnoreCase(String nombre, String artista);
+    List<Album> findByNombreAndArtista(String nombre, String artista);
 
-    // Por UUID
+    // Métodos para UUID que faltaban
     Optional<Album> findByUuid(UUID uuid);
     boolean existsByUuid(UUID uuid);
     void deleteByUuid(UUID uuid);
 
-    // Si está borrado (Equivalente a findByIsDeleted)
+    // Gestión de borrado lógico (isDeleted)
     List<Album> findByIsDeleted(Boolean isDeleted);
 
-    // Actualizar el álbum con isDeleted a true (Borrado lógico)
+    // Actualizar el álbum marcándolo como borrado (Soft Delete)
     @Modifying
     @Query("UPDATE Album a SET a.isDeleted = true WHERE a.id = :id")
     void updateIsDeletedToTrueById(Long id);

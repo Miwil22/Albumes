@@ -2,7 +2,9 @@ package artistas.mappers;
 
 import artistas.dto.ArtistaRequestDto;
 import artistas.models.Artista;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ArtistaMapper {
     public Artista toArtista(ArtistaRequestDto dto){
         return Artista.builder()

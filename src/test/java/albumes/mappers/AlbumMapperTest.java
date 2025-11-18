@@ -3,6 +3,7 @@ package albumes.mappers;
 import albumes.dto.AlbumCreateDto;
 import albumes.dto.AlbumUpdateDto;
 import albumes.models.Album;
+import artistas.models.Artista;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
@@ -12,27 +13,31 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class AlbumMapperTest {
 
-    // Inyectamos el mapper
     private final AlbumMapper albumMapper = new AlbumMapper();
+
+    // Creamos un artista de prueba
+    private final Artista artista = Artista.builder()
+            .id(1L)
+            .nombre("The Beatles")
+            .build();
 
     @Test
     void toAlbum_create() {
         // Arrange
-        Long id = 1L;
         AlbumCreateDto createDto = AlbumCreateDto.builder()
                 .nombre("Abbey Road")
                 .artista("The Beatles")
                 .genero("Rock")
                 .precio(19.99f)
                 .build();
-        // Act
-        var res = albumMapper.toAlbum(id, createDto);
+
+        // Act - AHORA PASAMOS EL ARTISTA, NO EL ID
+        var res = albumMapper.toAlbum(createDto, artista);
 
         // Assert
         assertAll(
-                () -> assertEquals(id, res.getId()),
                 () -> assertEquals(createDto.getNombre(), res.getNombre()),
-                () -> assertEquals(createDto.getArtista(), res.getArtista()),
+                () -> assertEquals(artista, res.getArtista()), // Comprobamos que el artista es el correcto
                 () -> assertEquals(createDto.getGenero(), res.getGenero()),
                 () -> assertEquals(createDto.getPrecio(), res.getPrecio())
         );
@@ -53,13 +58,17 @@ class AlbumMapperTest {
                 .nombre(updateDto.getNombre())
                 .genero(updateDto.getGenero())
                 .precio(updateDto.getPrecio())
+                .artista(artista)
                 .build();
+
         // Act
         var res = albumMapper.toAlbum(updateDto, album);
+
         // Assert
         assertAll(
                 () -> assertEquals(id, res.getId()),
                 () -> assertEquals(updateDto.getNombre(), res.getNombre()),
+                () -> assertEquals(album.getArtista(), res.getArtista()), // El artista no cambia
                 () -> assertEquals(updateDto.getGenero(), res.getGenero()),
                 () -> assertEquals(updateDto.getPrecio(), res.getPrecio())
         );
@@ -71,22 +80,25 @@ class AlbumMapperTest {
         Album album = Album.builder()
                 .id(1L)
                 .nombre("Abbey Road")
-                .artista("The Beatles")
+                .artista(artista) // Usamos el objeto artista
                 .genero("Rock")
                 .precio(19.99f)
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
-                .uuid(UUID.fromString("57727bc2-0c1c-494e-bbaf-e952a778e478"))
+                .uuid(UUID.randomUUID())
                 .build();
+
         // Act
         var res = albumMapper.toAlbumResponseDto(album);
+
         // Assert
         assertAll(
                 () -> assertEquals(album.getId(), res.getId()),
                 () -> assertEquals(album.getNombre(), res.getNombre()),
-                () -> assertEquals(album.getArtista(), res.getArtista()),
+                () -> assertEquals(album.getArtista().getNombre(), res.getArtista()), // Comprobamos el nombre del artista
                 () -> assertEquals(album.getGenero(), res.getGenero()),
-                () -> assertEquals(album.getPrecio(), res.getPrecio())
+                () -> assertEquals(album.getPrecio(), res.getPrecio()),
+                () -> assertEquals(album.getUuid(), res.getUuid())
         );
     }
 }
