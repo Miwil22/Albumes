@@ -29,6 +29,14 @@ public class Album {
     private Float precio;
 
     @Builder.Default
+    @Column(updatable = false, nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+    @Builder.Default
+    @Column(nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    private LocalDateTime updatedAt = LocalDateTime.now();
+
+    @Builder.Default
     @Column(unique = true, updatable = false, nullable = false)
     private UUID uuid = UUID.randomUUID();
 
@@ -36,15 +44,7 @@ public class Album {
     @Builder.Default
     private Boolean isDeleted = false;
 
-    @Builder.Default
-    @Column(updatable = false, nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
-
-    @Builder.Default
-    @Column(nullable = false)
-    private LocalDateTime updatedAt = LocalDateTime.now();
-
-    // Relación: Muchos Álbumes pertenecen a un Artista
+    // Relación: Muchos álbumes pertenecen a un artista
     @ManyToOne
     @JoinColumn(name = "artista_id")
     private Artista artista;

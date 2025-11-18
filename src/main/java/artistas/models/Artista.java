@@ -23,20 +23,20 @@ public class Artista {
     @Column(unique = true, nullable = false)
     private String nombre;
 
+    @Builder.Default
+    @Column(updatable = false, nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+    @Builder.Default
+    @Column(nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    private LocalDateTime updatedAt = LocalDateTime.now();
+
     @Column(columnDefinition = "boolean default false")
     @Builder.Default
     private Boolean isDeleted = false;
 
-    @Builder.Default
-    @Column(updatable = false, nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
-
-    @Builder.Default
-    @Column(nullable = false)
-    private LocalDateTime updatedAt = LocalDateTime.now();
-
-    // Un Artista tiene muchos Albumes
+    // Relación bidireccional: Un artista tiene muchos álbumes
     @OneToMany(mappedBy = "artista")
-    @JsonIgnoreProperties("artista") // Evita bucle infinito al convertir a JSON
+    @JsonIgnoreProperties("artista") // Para evitar bucles infinitos al convertir a JSON
     private List<Album> albumes;
 }
