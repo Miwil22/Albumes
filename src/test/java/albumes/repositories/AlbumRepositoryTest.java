@@ -1,15 +1,14 @@
 package albumes.repositories;
 
-import albumes.AlbumesApplication; // <--- Importamos la App principal
-import albumes.models.Album;
-import albumes.repositories.AlbumRepository;
-import artistas.models.Artista;
+
+import org.example.albumes.models.Album;
+import org.example.artistas.models.Artista;
+import org.example.albumes.repositories.AlbumRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.test.context.ContextConfiguration; // <--- Necesario
 import org.springframework.test.context.jdbc.Sql;
 
 import java.util.List;
@@ -19,8 +18,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @DataJpaTest
-// ESTA LÍNEA ARREGLA EL ERROR: Le dice a Spring dónde empezar
-@ContextConfiguration(classes = AlbumesApplication.class)
 @Sql(value = "/reset.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 public class AlbumRepositoryTest {
 
@@ -34,11 +31,9 @@ public class AlbumRepositoryTest {
 
     @BeforeEach
     void setUp(){
-        // Creamos y guardamos el artista primero (necesario por la relación)
         artista = Artista.builder().nombre("The Beatles").build();
         entityManager.persist(artista);
 
-        // Creamos el álbum vinculado al artista
         Album album = Album.builder()
                 .nombre("Abbey Road")
                 .genero("Rock")
@@ -47,7 +42,7 @@ public class AlbumRepositoryTest {
                 .uuid(UUID.randomUUID())
                 .build();
         entityManager.persist(album);
-        entityManager.flush(); // Forzamos que se guarden los datos antes del test
+        entityManager.flush();
     }
 
     @Test
@@ -65,7 +60,6 @@ public class AlbumRepositoryTest {
 
     @Test
     void findByArtistaNombre(){
-        // Asumiendo que implementaste este método en el repositorio como te indiqué
         List<Album> albumes = albumRepository.findByArtistaNombreContainingIgnoreCase("beatles");
         assertEquals(1, albumes.size());
     }
