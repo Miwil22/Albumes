@@ -1,6 +1,6 @@
 package albumes.repositories;
 
-
+import org.example.Application;
 import org.example.albumes.models.Album;
 import org.example.artistas.models.Artista;
 import org.example.albumes.repositories.AlbumRepository;
@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.util.List;
@@ -17,6 +18,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
+@ContextConfiguration(classes = Application.class)
 @DataJpaTest
 @Sql(value = "/reset.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 public class AlbumRepositoryTest {
