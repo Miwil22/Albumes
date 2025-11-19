@@ -1,10 +1,11 @@
 package albumes.controllers;
 
-import albumes.dto.AlbumCreateDto;
-import albumes.dto.AlbumResponseDto;
-import albumes.dto.AlbumUpdateDto;
-import albumes.exceptions.AlbumNotFoundException;
-import albumes.services.AlbumService;
+import org.example.Application;
+import org.example.albumes.dto.AlbumCreateDto;
+import org.example.albumes.dto.AlbumResponseDto;
+import org.example.albumes.dto.AlbumUpdateDto;
+import org.example.albumes.exceptions.AlbumNotFoundException;
+import org.example.albumes.services.AlbumService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -19,7 +20,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-@SpringBootTest
+@SpringBootTest(classes = Application.class)
 @AutoConfigureMockMvc
 class AlbumRestControllerTest {
 

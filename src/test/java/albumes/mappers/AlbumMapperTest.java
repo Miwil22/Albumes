@@ -1,9 +1,10 @@
 package albumes.mappers;
 
-import albumes.dto.AlbumCreateDto;
-import albumes.dto.AlbumUpdateDto;
-import albumes.models.Album;
-import artistas.models.Artista;
+import org.example.albumes.dto.AlbumCreateDto;
+import org.example.albumes.dto.AlbumUpdateDto;
+import org.example.albumes.mappers.AlbumMapper;
+import org.example.albumes.models.Album;
+import org.example.artistas.models.Artista;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;

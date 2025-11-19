@@ -1,11 +1,12 @@
 package artistas.services;
 
-import artistas.dto.ArtistaRequestDto;
-import artistas.exceptions.ArtistaConflictException;
-import artistas.exceptions.ArtistaNotFoundException;
-import artistas.mappers.ArtistaMapper;
-import artistas.models.Artista;
-import artistas.repositories.ArtistaRepository;
+import org.example.artistas.dto.ArtistaRequestDto;
+import org.example.artistas.exceptions.ArtistaConflictException;
+import org.example.artistas.exceptions.ArtistaNotFoundException;
+import org.example.artistas.mappers.ArtistaMapper;
+import org.example.artistas.models.Artista;
+import org.example.artistas.repositories.ArtistaRepository;
+import org.example.artistas.services.ArtistaServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

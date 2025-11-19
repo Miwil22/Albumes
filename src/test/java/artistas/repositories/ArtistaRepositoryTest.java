@@ -1,7 +1,8 @@
 package artistas.repositories;
 
-import albumes.AlbumesApplication;
-import artistas.models.Artista;
+import org.example.Application;
+import org.example.artistas.models.Artista;
+import org.example.artistas.repositories.ArtistaRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
-@ContextConfiguration(classes = AlbumesApplication.class)
+@ContextConfiguration(classes = Application.class)
 @Sql(value = "/reset.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 class ArtistaRepositoryTest {
 

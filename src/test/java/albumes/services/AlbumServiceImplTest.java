@@ -1,15 +1,15 @@
 package albumes.services;
 
-import albumes.dto.AlbumCreateDto;
-import albumes.dto.AlbumResponseDto;
-import albumes.dto.AlbumUpdateDto;
-import albumes.exceptions.AlbumBadUuidException;
-import albumes.exceptions.AlbumNotFoundException;
-import albumes.mappers.AlbumMapper;
-import albumes.models.Album;
-import albumes.repositories.AlbumRepository;
-import artistas.models.Artista;
-import artistas.services.ArtistaService;
+import org.example.albumes.dto.AlbumCreateDto;
+import org.example.albumes.dto.AlbumResponseDto;
+import org.example.albumes.dto.AlbumUpdateDto;
+import org.example.albumes.exceptions.AlbumNotFoundException;
+import org.example.albumes.mappers.AlbumMapper;
+import org.example.albumes.models.Album;
+import org.example.albumes.repositories.AlbumRepository;
+import org.example.artistas.models.Artista;
+import org.example.artistas.services.ArtistaService;
+import org.example.albumes.services.AlbumServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

@@ -1,9 +1,9 @@
 package artistas.controllers;
 
-import albumes.AlbumesApplication;
-import artistas.dto.ArtistaRequestDto;
-import artistas.models.Artista;
-import artistas.services.ArtistaService;
+import org.example.Application;
+import org.example.artistas.dto.ArtistaRequestDto;
+import org.example.artistas.models.Artista;
+import org.example.artistas.services.ArtistaService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +19,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest(classes = AlbumesApplication.class)
+@SpringBootTest(classes = Application.class)
 @AutoConfigureMockMvc
 class ArtistaRestControllerTest {
 
