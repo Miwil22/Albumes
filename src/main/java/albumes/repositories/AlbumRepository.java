@@ -17,11 +17,12 @@ public interface AlbumRepository extends JpaRepository<Album, Long> {
     List<Album> findByNombreContainingIgnoreCase(String nombre);
 
     // Buscar por nombre del artista (Navegamos por la relación: artista.nombre)
-    @Query("SELECT a FROM Album a WHERE LOWER(a.artista.nombre) LIKE %:artista%")
+    @Query("SELECT a FROM Album a WHERE LOWER(a.artista.nombre) LIKE LOWER(CONCAT('%', :artista, '%'))")
     List<Album> findByArtistaNombreContainingIgnoreCase(String artista);
 
     // Buscar por ambos
-    @Query("SELECT a FROM Album a WHERE LOWER(a.nombre) LIKE %:nombre% AND LOWER(a.artista.nombre) LIKE %:artista%")
+    @Query("SELECT a FROM Album a WHERE LOWER(a.nombre) LIKE LOWER(CONCAT('%', :nombre, '%')) AND LOWER(a.artista" +
+            ".nombre) LIKE LOWER(CONCAT('%', :artista, '%'))")
     List<Album> findByNombreAndArtista(String nombre, String artista);
 
     // Métodos para UUID que faltaban
