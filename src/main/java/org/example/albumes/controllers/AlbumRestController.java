@@ -3,7 +3,7 @@ package org.example.albumes.controllers;
 import org.example.albumes.dto.AlbumCreateDto;
 import org.example.albumes.dto.AlbumResponseDto;
 import org.example.albumes.dto.AlbumUpdateDto;
-import org.example.albumes.dto.AlbumBadRequestException;
+import org.example.albumes.exceptions.AlbumBadRequestException;
 import org.example.albumes.exceptions.AlbumNotFoundException;
 import org.example.albumes.services.AlbumService;
 import jakarta.validation.Valid;
