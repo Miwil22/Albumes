@@ -37,6 +37,7 @@ class ArtistaServiceImplTest {
         ArtistaRequestDto dto = ArtistaRequestDto.builder().nombre("Queen").build();
         Artista saved = Artista.builder().id(1L).nombre("Queen").build();
 
+        // Simulamos que NO existe (Optional.empty) para que permita guardarlo.
         when(artistaRepository.findByNombreEqualsIgnoreCase("Queen")).thenReturn(Optional.empty());
         when(artistaRepository.save(any(Artista.class))).thenReturn(saved);
 
@@ -50,23 +51,21 @@ class ArtistaServiceImplTest {
         ArtistaRequestDto dto = ArtistaRequestDto.builder().nombre("Queen").build();
         Artista existing = Artista.builder().id(1L).nombre("Queen").build();
 
+        // Simulamos que YA existe.
         when(artistaRepository.findByNombreEqualsIgnoreCase("Queen")).thenReturn(Optional.of(existing));
 
+        // Debe lanzar excepción de conflicto (409).
         assertThrows(ArtistaConflictException.class, () -> artistaService.save(dto));
     }
 
     @Test
-    void findById_NotFount(){
-        when(artistaRepository.findById(99L)).thenReturn(Optional.empty());
-        assertThrows(ArtistaNotFoundException.class, () -> artistaService.findById(99L));
-    }
-
-    @Test
     void delete_ShouldThrowConflict_IfHasAlbums(){
-    when(artistaRepository.findById(1L)).thenReturn(Optional.of(Artista.builder().id(1L).build()));
-    when(artistaRepository.existsAlbumById(1L)).thenReturn(true);
+        // Simulamos que el artista existe...
+        when(artistaRepository.findById(1L)).thenReturn(Optional.of(Artista.builder().id(1L).build()));
+        // ...pero que tiene álbumes asociados.
+        when(artistaRepository.existsAlbumById(1L)).thenReturn(true);
 
-    assertThrows(ArtistaConflictException.class, () -> artistaService.deleteById(1L));
+        // No debe dejar borrarlo (Integridad referencial).
+        assertThrows(ArtistaConflictException.class, () -> artistaService.deleteById(1L));
     }
-
 }

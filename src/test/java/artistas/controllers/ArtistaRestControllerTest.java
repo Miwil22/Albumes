@@ -24,13 +24,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class ArtistaRestControllerTest {
 
     @Autowired
-    private MockMvc mockMvc;
+    private MockMvc mockMvc; // Versión clásica del tester
 
     @MockitoBean
     private ArtistaService artistaService;
 
     @Autowired
-    private ObjectMapper objectMapper;
+    private ObjectMapper objectMapper; // Para convertir objetos Java a texto JSON
 
     @Test
     void create_ShouldReturnCreated() throws Exception {
@@ -39,6 +39,7 @@ class ArtistaRestControllerTest {
 
         when(artistaService.save(any(ArtistaRequestDto.class))).thenReturn(saved);
 
+        // Hacemos el POST enviando el objeto convertido a JSON string
         mockMvc.perform(post("/api/v1/artistas")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))

@@ -28,6 +28,7 @@ class ArtistaRepositoryTest {
 
     @BeforeEach
     void setUp(){
+        // Preparamos la BD con un artista de prueba "Queen".
         Artista artista = Artista.builder().nombre("Queen").build();
         entityManager.persist(artista);
         entityManager.flush();
@@ -35,15 +36,20 @@ class ArtistaRepositoryTest {
 
     @Test
     void findByNombreEqualsIgnoreCase(){
+        // Buscamos ignorando mayúsculas ("queen" encuentra "Queen").
         Optional<Artista> artista = artistaRepository.findByNombreEqualsIgnoreCase("queen");
+
+        // Verificamos que lo ha encontrado (isPresent) y que es el correcto.
         assertTrue(artista.isPresent());
         assertEquals("Queen", artista.get().getNombre());
     }
 
     @Test
     void findByNombreEqualsIgnoreCase_NotFound(){
+        // Buscamos algo que NO existe.
         Optional<Artista> artista = artistaRepository.findByNombreEqualsIgnoreCase("Nirvana");
+
+        // Verificamos que la caja (Optional) está vacía.
         assertTrue(artista.isEmpty());
     }
-
 }
